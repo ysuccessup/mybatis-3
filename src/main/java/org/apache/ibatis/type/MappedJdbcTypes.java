@@ -22,6 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 自定义类型处理器时，用于指明该TypeHandler 实现类能够处理的JDBC类型集合。
  * @author Eduardo Macarron
  */
 @Documented

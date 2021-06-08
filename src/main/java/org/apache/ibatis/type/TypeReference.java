@@ -34,7 +34,9 @@ public abstract class TypeReference<T> {
   }
 
   Type getSuperclassTypeParameter(Class<?> clazz) {
+    // 获得该类带有泛型的父类 例如 ByteTypeHandler 的父类BaseTypeHandler<Byte>
     Type genericSuperclass = clazz.getGenericSuperclass();
+    // 如果父类是Class类型，则继续往上递归
     if (genericSuperclass instanceof Class) {
       // try to climb up the hierarchy until meet something useful
       if (TypeReference.class != genericSuperclass) {
@@ -45,12 +47,13 @@ public abstract class TypeReference<T> {
         + "Remove the extension or add a type parameter to it.");
     }
 
+    // 获取参数化类型的数组，泛型可能有多个
     Type rawType = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
     // TODO remove this when Reflector is fixed to return Types
     if (rawType instanceof ParameterizedType) {
       rawType = ((ParameterizedType) rawType).getRawType();
     }
-
+    // Byte
     return rawType;
   }
 

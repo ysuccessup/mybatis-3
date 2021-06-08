@@ -24,6 +24,7 @@ import org.apache.ibatis.executor.result.ResultMapException;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ * 典型的模板方法模式，实现了TypeHandler的方法，将异常捕获、null值处理的通用逻辑做了处理，具体真正的转换逻辑留给子类实现
  * @author Clinton Begin
  * @author Simone Tripodi
  */

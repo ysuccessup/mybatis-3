@@ -33,6 +33,7 @@ import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.io.Resources;
 
 /**
+ * 类型别名注册表
  * @author Clinton Begin
  */
 public class TypeAliasRegistry {
@@ -102,6 +103,7 @@ public class TypeAliasRegistry {
 
   @SuppressWarnings("unchecked")
   // throws class cast exception as well if types cannot be assigned
+  /** 通过别名来找到具体的类 */
   public <T> Class<T> resolveAlias(String string) {
     try {
       if (string == null) {
@@ -121,10 +123,12 @@ public class TypeAliasRegistry {
     }
   }
 
+  /** 通过包名注册类 */
   public void registerAliases(String packageName){
     registerAliases(packageName, Object.class);
   }
 
+  /** 获得包内的类，除去内部类和接口 */
   public void registerAliases(String packageName, Class<?> superType){
     ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<Class<?>>();
     resolverUtil.find(new ResolverUtil.IsA(superType), packageName);
@@ -138,6 +142,7 @@ public class TypeAliasRegistry {
     }
   }
 
+  /** 注册类 */
   public void registerAlias(Class<?> type) {
     String alias = type.getSimpleName();
     Alias aliasAnnotation = type.getAnnotation(Alias.class);

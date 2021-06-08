@@ -49,14 +49,25 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.reflection.Jdk;
 
 /**
+ * 类型处理器注册表
+ * 核心方法注册和查找typeHandler
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
 public final class TypeHandlerRegistry {
 
+  // 记录JdbcType和TypeHandler之间的对应关系，其中JdbcType是一个枚举类型，它定义对应的JDBC类型
+  // 该集合主要用于从结果集读取数据时，将数据从Jdbc类型转换成Java类型
   private final Map<JdbcType, TypeHandler<?>> JDBC_TYPE_HANDLER_MAP = new EnumMap<JdbcType, TypeHandler<?>>(JdbcType.class);
+
+  // 记录了Java类型向指定的JdbcType转换时，需要使用的TypeHandler对象。例如：Java类型中的String可能
+  // 转换成数据库的char、varchar等多种类型，所以存在一对多的关系，所以值要用Map来存储
   private final Map<Type, Map<JdbcType, TypeHandler<?>>> TYPE_HANDLER_MAP = new ConcurrentHashMap<Type, Map<JdbcType, TypeHandler<?>>>();
+
+  // 未知类型对象的TypeHandler
   private final TypeHandler<Object> UNKNOWN_TYPE_HANDLER = new UnknownTypeHandler(this);
+
+  // 记录了全部TypeHandler的类型以及该类型相应的TypeHandler对象
   private final Map<Class<?>, TypeHandler<?>> ALL_TYPE_HANDLERS_MAP = new HashMap<Class<?>, TypeHandler<?>>();
 
   private static final Map<JdbcType, TypeHandler<?>> NULL_TYPE_HANDLER_MAP = Collections.emptyMap();
@@ -442,13 +453,16 @@ public final class TypeHandlerRegistry {
   }
 
   // scan
-
+  // 通过包名，批量注册类型处理器，当在 mybatis-config.xml 通过包扫描的方式注册处理器时就会调用本方法处理
   public void register(String packageName) {
+    // 解析器工具类: 从指定包名中解析出包中的类型处理器
     ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<Class<?>>();
     resolverUtil.find(new ResolverUtil.IsA(TypeHandler.class), packageName);
+    // 遍历解析出的处理器类型集合
     Set<Class<? extends Class<?>>> handlerSet = resolverUtil.getClasses();
     for (Class<?> type : handlerSet) {
       //Ignore inner classes and interfaces (including package-info.java) and abstract classes
+      // 过滤掉内部类、接口以及抽象类，调用 #register(Class<?> typeHandlerClass) 注册
       if (!type.isAnonymousClass() && !type.isInterface() && !Modifier.isAbstract(type.getModifiers())) {
         register(type);
       }
