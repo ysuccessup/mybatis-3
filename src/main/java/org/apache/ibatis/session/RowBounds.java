@@ -16,11 +16,14 @@
 package org.apache.ibatis.session;
 
 /**
+ * 逻辑分页类
  * @author Clinton Begin
  */
 public class RowBounds {
 
+  // 分页起始
   public static final int NO_ROW_OFFSET = 0;
+  // 数量
   public static final int NO_ROW_LIMIT = Integer.MAX_VALUE;
   public static final RowBounds DEFAULT = new RowBounds();
 

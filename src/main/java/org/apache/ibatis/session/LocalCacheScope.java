@@ -16,6 +16,7 @@
 package org.apache.ibatis.session;
 
 /**
+ * 一级缓存范围
  * @author Eduardo Macarron
  */
 public enum LocalCacheScope {

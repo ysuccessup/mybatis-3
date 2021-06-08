@@ -20,6 +20,10 @@ import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
 
 /**
+ * 自动映射未知列
+ * <settings>
+ *     <setting name="autoMappingUnknownColumnBehavior" value="NONE"/>
+ * </settings>
  * Specify the behavior when detects an unknown column (or unknown property type) of automatic mapping target.
  *
  * @since 3.4.0
@@ -28,6 +32,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 public enum AutoMappingUnknownColumnBehavior {
 
   /**
+   * 不做任何处理 (默认值)
    * Do nothing (Default).
    */
   NONE {
@@ -38,6 +43,7 @@ public enum AutoMappingUnknownColumnBehavior {
   },
 
   /**
+   * 警告日志形式的详细信息
    * Output warning log.
    * Note: The log level of {@code 'org.apache.ibatis.session.AutoMappingUnknownColumnBehavior'} must be set to {@code WARN}.
    */
@@ -49,6 +55,7 @@ public enum AutoMappingUnknownColumnBehavior {
   },
 
   /**
+   * 映射失败，抛出异常和详细信息
    * Fail mapping.
    * Note: throw {@link SqlSessionException}.
    */

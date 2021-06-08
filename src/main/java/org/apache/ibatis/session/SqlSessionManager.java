@@ -30,6 +30,9 @@ import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
+ * SqlSessionManager主要是使用了ThreadLocal保证线程安全，每个线程独享一份SqlSession，所以保证SqlSession的方法都是线程安全的
+ * 使用本地变量副本，避免每次调用openSession()，造成资源浪费
+ * 装饰者模式+代理模式
  * @author Larry Meadors
  */
 public class SqlSessionManager implements SqlSessionFactory, SqlSession {

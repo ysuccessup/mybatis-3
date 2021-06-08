@@ -26,12 +26,14 @@ import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
 
 /**
+ * 构建SqlSessionFactory
  * Builds {@link SqlSession} instances.
  *
  * @author Clinton Begin
  */
 public class SqlSessionFactoryBuilder {
 
+  /** 以下四个一组 */
   public SqlSessionFactory build(Reader reader) {
     return build(reader, null, null);
   }
@@ -60,6 +62,7 @@ public class SqlSessionFactoryBuilder {
     }
   }
 
+  /** 以下四个一组 */
   public SqlSessionFactory build(InputStream inputStream) {
     return build(inputStream, null, null);
   }

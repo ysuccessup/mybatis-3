@@ -36,12 +36,14 @@ import org.apache.ibatis.transaction.managed.ManagedTransactionFactory;
  */
 public class DefaultSqlSessionFactory implements SqlSessionFactory {
 
+  // 全局配置
   private final Configuration configuration;
 
   public DefaultSqlSessionFactory(Configuration configuration) {
     this.configuration = configuration;
   }
 
+  /** 以下六个一组,通过数据源创建SqlSession */
   @Override
   public SqlSession openSession() {
     return openSessionFromDataSource(configuration.getDefaultExecutorType(), null, false);
@@ -72,6 +74,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     return openSessionFromDataSource(execType, null, autoCommit);
   }
 
+  /** 以下二个一组,通过连接创建SqlSession */
   @Override
   public SqlSession openSession(Connection connection) {
     return openSessionFromConnection(configuration.getDefaultExecutorType(), connection);
@@ -87,12 +90,22 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     return configuration;
   }
 
+  /**
+   * 通过数据源创建 SqlSession
+   * @param execType 执行器类型
+   * @param level 事物隔离级别
+   * @param autoCommit 自动提交
+   * @return
+   */
   private SqlSession openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level, boolean autoCommit) {
     Transaction tx = null;
     try {
+      // 环境
       final Environment environment = configuration.getEnvironment();
+      // 创建事物
       final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
       tx = transactionFactory.newTransaction(environment.getDataSource(), level, autoCommit);
+      // 创建执行器
       final Executor executor = configuration.newExecutor(tx, execType);
       return new DefaultSqlSession(configuration, executor, autoCommit);
     } catch (Exception e) {
@@ -103,6 +116,12 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     }
   }
 
+  /**
+   * 通过连接构建SqlSession
+   * @param execType 执行器类型
+   * @param connection 连接
+   * @return
+   */
   private SqlSession openSessionFromConnection(ExecutorType execType, Connection connection) {
     try {
       boolean autoCommit;
@@ -112,10 +131,13 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
         // Failover to true, as most poor drivers
         // or databases won't support transactions
         autoCommit = true;
-      }      
+      }
+      // 环境
       final Environment environment = configuration.getEnvironment();
+      // 创建事物
       final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
       final Transaction tx = transactionFactory.newTransaction(connection);
+      // 创建执行器
       final Executor executor = configuration.newExecutor(tx, execType);
       return new DefaultSqlSession(configuration, executor, autoCommit);
     } catch (Exception e) {
@@ -125,6 +147,11 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     }
   }
 
+  /**
+   * 通过环境获取事物
+   * @param environment
+   * @return
+   */
   private TransactionFactory getTransactionFactoryFromEnvironment(Environment environment) {
     if (environment == null || environment.getTransactionFactory() == null) {
       return new ManagedTransactionFactory();

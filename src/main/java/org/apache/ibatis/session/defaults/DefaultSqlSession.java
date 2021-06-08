@@ -40,6 +40,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ * SqlSession的默认实现。 请注意，此类不是线程安全的
  *
  * The default implementation for {@link SqlSession}.
  * Note that this class is not Thread-Safe.
@@ -48,9 +49,11 @@ import org.apache.ibatis.session.SqlSession;
  */
 public class DefaultSqlSession implements SqlSession {
 
+  // 全局配置
   private final Configuration configuration;
+  // 执行器
   private final Executor executor;
-
+  // 自动提交
   private final boolean autoCommit;
   private boolean dirty;
   private List<Cursor<?>> cursorList;
