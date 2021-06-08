@@ -26,6 +26,11 @@ import org.apache.ibatis.transaction.Transaction;
 import org.apache.ibatis.transaction.TransactionException;
 
 /**
+ * 直接使用JDBC提交和回滚功能的Transaction 。
+ * 它依赖于从数据源检索的连接来管理事务的范围。
+ * 延迟连接检索，直到调用getConnection（）为止。
+ * 启用自动提交时，忽略提交或回滚请求。
+ *
  * {@link Transaction} that makes use of the JDBC commit and rollback facilities directly.
  * It relies on the connection retrieved from the dataSource to manage the scope of the transaction.
  * Delays connection retrieval until getConnection() is called.
@@ -119,6 +124,7 @@ public class JdbcTransaction implements Transaction {
         // and they mandate a commit/rollback before closing the connection.
         // A workaround is setting the autocommit to true before closing the connection.
         // Sybase throws an exception here.
+        // 某些数据库使用 select 语句启动事务，并在关闭连接之前强制执行 commit rollback。解决方法是在关闭连接之前将自动提交设置为 true。 Sybase 在这里抛出异常。
         if (log.isDebugEnabled()) {
           log.debug("Resetting autocommit to true on JDBC Connection [" + connection + "]");
         }
