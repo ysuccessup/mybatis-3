@@ -36,19 +36,25 @@ import org.apache.ibatis.io.Resources;
  * @author Eduardo Macarron
  */
 public class UnpooledDataSource implements DataSource {
-  
+  // 加载 Driver 类的类加载器
   private ClassLoader driverClassLoader;
+  // 数据库连接驱动的相关配置
   private Properties driverProperties;
+  // 缓存所有已注册的数据库连接驱动
   private static Map<String, Driver> registeredDrivers = new ConcurrentHashMap<String, Driver>();
 
+  // 这是 JDBC 驱动的 Java 类的完全限定名
   private String driver;
   private String url;
   private String username;
   private String password;
 
+  // 是否自动提交
   private Boolean autoCommit;
+  // 默认事物隔离级别
   private Integer defaultTransactionIsolationLevel;
 
+  // 静态块，在初始化的时候，从 DriverManager 中获取所有的已注册的驱动信息，并缓存到该类的 registeredDrivers集合中
   static {
     Enumeration<Driver> drivers = DriverManager.getDrivers();
     while (drivers.hasMoreElements()) {
@@ -197,13 +203,17 @@ public class UnpooledDataSource implements DataSource {
   }
 
   private Connection doGetConnection(Properties properties) throws SQLException {
+    // 初始化数据库驱动
     initializeDriver();
+    // 通过 DriverManager 来获取一个数据库连接
     Connection connection = DriverManager.getConnection(url, properties);
+    // 配置数据库连接的 autoCommit 和隔离级别
     configureConnection(connection);
     return connection;
   }
 
   private synchronized void initializeDriver() throws SQLException {
+    // 如果当前的驱动还没有注册，则进行注册
     if (!registeredDrivers.containsKey(driver)) {
       Class<?> driverType;
       try {
@@ -212,10 +222,12 @@ public class UnpooledDataSource implements DataSource {
         } else {
           driverType = Resources.classForName(driver);
         }
+        // 创建驱动
         // DriverManager requires the driver to be loaded via the system ClassLoader.
         // http://www.kfu.com/~nsayer/Java/dyn-jdbc.html
         Driver driverInstance = (Driver)driverType.newInstance();
         DriverManager.registerDriver(new DriverProxy(driverInstance));
+        // 向本类的 registeredDrivers 注册驱动
         registeredDrivers.put(driver, driverInstance);
       } catch (Exception e) {
         throw new SQLException("Error setting driver on UnpooledDataSource. Cause: " + e);
@@ -223,6 +235,7 @@ public class UnpooledDataSource implements DataSource {
     }
   }
 
+  // 设置是否自动提交   事务的隔离级别
   private void configureConnection(Connection conn) throws SQLException {
     if (autoCommit != null && autoCommit != conn.getAutoCommit()) {
       conn.setAutoCommit(autoCommit);

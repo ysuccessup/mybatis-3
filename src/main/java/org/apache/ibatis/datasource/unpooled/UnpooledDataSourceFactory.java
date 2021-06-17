@@ -25,13 +25,16 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
 /**
+ * 非池化数据源工厂
  * @author Clinton Begin
  */
 public class UnpooledDataSourceFactory implements DataSourceFactory {
 
+  // 数据库驱动前缀
   private static final String DRIVER_PROPERTY_PREFIX = "driver.";
+  // 数据库驱动前缀长度
   private static final int DRIVER_PROPERTY_PREFIX_LENGTH = DRIVER_PROPERTY_PREFIX.length();
-
+  // 数据源
   protected DataSource dataSource;
 
   public UnpooledDataSourceFactory() {
@@ -44,6 +47,8 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
     MetaObject metaDataSource = SystemMetaObject.forObject(dataSource);
     for (Object key : properties.keySet()) {
       String propertyName = (String) key;
+      // 以 "driver." 开头的配置项是对 DataSource 的配置，记录到 driverProperties  中
+      // 如果不以driver.开头，但却是数据源UnpooledDataSource类中定义的属性，也需要将其保存在driverProperties对象中
       if (propertyName.startsWith(DRIVER_PROPERTY_PREFIX)) {
         String value = properties.getProperty(propertyName);
         driverProperties.setProperty(propertyName.substring(DRIVER_PROPERTY_PREFIX_LENGTH), value);
@@ -55,6 +60,7 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
         throw new DataSourceException("Unknown DataSource property: " + propertyName);
       }
     }
+    // 设置 DataSource.driverProperties 属性值
     if (driverProperties.size() > 0) {
       metaDataSource.setValue("driverProperties", driverProperties);
     }
@@ -65,6 +71,7 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
     return dataSource;
   }
 
+  // 类型转换 将配置文件中配置的字符串转换为对应的数据类型
   private Object convertValue(MetaObject metaDataSource, String propertyName, String value) {
     Object convertedValue = value;
     Class<?> targetType = metaDataSource.getSetterType(propertyName);

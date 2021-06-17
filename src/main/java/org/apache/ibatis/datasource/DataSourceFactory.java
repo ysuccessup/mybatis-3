@@ -19,12 +19,18 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 /**
+ * 数据源工厂
+ * {@link org.apache.ibatis.datasource.jndi.JndiDataSourceFactory}
+ * {@link org.apache.ibatis.datasource.pooled.PooledDataSourceFactory}
+ * {@link org.apache.ibatis.datasource.unpooled.UnpooledDataSourceFactory}
  * @author Clinton Begin
  */
 public interface DataSourceFactory {
 
+  // 设置数据源属性
   void setProperties(Properties props);
 
+  // 获取数据源
   DataSource getDataSource();
 
 }
