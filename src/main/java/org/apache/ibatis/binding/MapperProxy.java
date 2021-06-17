@@ -35,7 +35,9 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
 
   private static final long serialVersionUID = -6424540398559729838L;
   private final SqlSession sqlSession;
+  // 当前需要代理的接口
   private final Class<T> mapperInterface;
+  // key为mapper接口的方法对象（public abstract int org.apache.ibatis.submitted.blobtest.BlobMapper.insert(org.apache.ibatis.submitted.blobtest.BlobRecord)）
   private final Map<Method, MapperMethod> methodCache;
 
   public MapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map<Method, MapperMethod> methodCache) {

@@ -42,7 +42,9 @@ import java.util.*;
  */
 public class MapperMethod {
 
+  // 封装了SQL标签的类型 insert update delete select
   private final SqlCommand command;
+  // 封装了方法的参数信息 返回类型信息等
   private final MethodSignature method;
 
   public MapperMethod(Class<?> mapperInterface, Method method, Configuration config) {
@@ -54,7 +56,7 @@ public class MapperMethod {
     Object result;
     switch (command.getType()) {
       case INSERT: {
-      Object param = method.convertArgsToSqlCommandParam(args);
+        Object param = method.convertArgsToSqlCommandParam(args);
         result = rowCountResult(sqlSession.insert(command.getName(), param));
         break;
       }
@@ -79,6 +81,7 @@ public class MapperMethod {
         } else if (method.returnsCursor()) {
           result = executeForCursor(sqlSession, args);
         } else {
+          // SQL参数值
           Object param = method.convertArgsToSqlCommandParam(args);
           result = sqlSession.selectOne(command.getName(), param);
         }
@@ -209,8 +212,9 @@ public class MapperMethod {
   }
 
   public static class SqlCommand {
-
+    // org.apache.ibatis.submitted.blobtest.BlobMapper.insert
     private final String name;
+    // SQL命令类型 如INSERT、UPDATE
     private final SqlCommandType type;
 
     public SqlCommand(Configuration configuration, Class<?> mapperInterface, Method method) {
