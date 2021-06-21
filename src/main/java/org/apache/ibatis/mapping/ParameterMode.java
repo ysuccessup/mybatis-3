@@ -16,6 +16,7 @@
 package org.apache.ibatis.mapping;
 
 /**
+ * 存储过程三种类型的参数，需配合 statementType=“CALLABLE” 使用
  * @author Clinton Begin
  */
 public enum ParameterMode {

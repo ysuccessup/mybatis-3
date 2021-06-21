@@ -48,13 +48,15 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
+ * mybatis-config.xml 解析
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
 public class XMLConfigBuilder extends BaseBuilder {
-
+  // 解析标识,因为Configuration是全局变量，只需要解析创建一次即可，true表示已经解析创建过,false则表示没有
   private boolean parsed;
   private final XPathParser parser;
+  // 环境参数
   private String environment;
   private final ReflectorFactory localReflectorFactory = new DefaultReflectorFactory();
 
@@ -96,14 +98,18 @@ public class XMLConfigBuilder extends BaseBuilder {
       throw new BuilderException("Each XMLConfigBuilder can only be used once.");
     }
     parsed = true;
+    // mybatis配置文件解析的主流程
     parseConfiguration(parser.evalNode("/configuration"));
     return configuration;
   }
 
+  // 解析的代码和xml的配置一一对应
   private void parseConfiguration(XNode root) {
     try {
       //issue #117 read properties first
+      // 解析子节点properties
       propertiesElement(root.evalNode("properties"));
+      // 解析子节点settings
       Properties settings = settingsAsProperties(root.evalNode("settings"));
       loadCustomVfs(settings);
       typeAliasesElement(root.evalNode("typeAliases"));
@@ -116,6 +122,7 @@ public class XMLConfigBuilder extends BaseBuilder {
       environmentsElement(root.evalNode("environments"));
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
       typeHandlerElement(root.evalNode("typeHandlers"));
+      // 解析mappers 主要的crud操作都是在mappers中定义的
       mapperElement(root.evalNode("mappers"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
@@ -155,9 +162,11 @@ public class XMLConfigBuilder extends BaseBuilder {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
         if ("package".equals(child.getName())) {
+          // 以 package 方式配置
           String typeAliasPackage = child.getStringAttribute("name");
           configuration.getTypeAliasRegistry().registerAliases(typeAliasPackage);
         } else {
+          // 以 alias 方式配置
           String alias = child.getStringAttribute("alias");
           String type = child.getStringAttribute("type");
           try {
@@ -215,8 +224,11 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   private void propertiesElement(XNode context) throws Exception {
     if (context != null) {
+      // 获取 properties 节点，并保存 Properties 中
       Properties defaults = context.getChildrenAsProperties();
+      // 获取 resource 的值
       String resource = context.getStringAttribute("resource");
+      // 获取 url 的值
       String url = context.getStringAttribute("url");
       if (resource != null && url != null) {
         throw new BuilderException("The properties element cannot specify both a URL and a resource based property file reference.  Please specify one or the other.");
@@ -230,7 +242,9 @@ public class XMLConfigBuilder extends BaseBuilder {
       if (vars != null) {
         defaults.putAll(vars);
       }
+      // 将解析的值保存到 XPathParser 中
       parser.setVariables(defaults);
+      // 将解析的值保存到 Configuration 中
       configuration.setVariables(defaults);
     }
   }
@@ -359,6 +373,7 @@ public class XMLConfigBuilder extends BaseBuilder {
   private void mapperElement(XNode parent) throws Exception {
     if (parent != null) {
       for (XNode child : parent.getChildren()) {
+        // class与package通过MapperProxy代理来完成
         if ("package".equals(child.getName())) {
           String mapperPackage = child.getStringAttribute("name");
           configuration.addMappers(mapperPackage);
@@ -366,6 +381,7 @@ public class XMLConfigBuilder extends BaseBuilder {
           String resource = child.getStringAttribute("resource");
           String url = child.getStringAttribute("url");
           String mapperClass = child.getStringAttribute("class");
+          // 如果是resource、url会有一个流资源的读取来解析
           if (resource != null && url == null && mapperClass == null) {
             ErrorContext.instance().resource(resource);
             InputStream inputStream = Resources.getResourceAsStream(resource);

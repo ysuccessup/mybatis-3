@@ -48,6 +48,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 /**
+ * 负责 sql 配置的 mapper 配置解析
  * @author Clinton Begin
  */
 public class XMLMapperBuilder extends BaseBuilder {
@@ -88,14 +89,20 @@ public class XMLMapperBuilder extends BaseBuilder {
   }
 
   public void parse() {
+    // 配置文件为第一次加载时才会执行完整的解析操作
     if (!configuration.isResourceLoaded(resource)) {
+      // 读取并配置MapperXml文件的内容 核心逻辑
       configurationElement(parser.evalNode("/mapper"));
+      // 记录已加载当前的配置文件
       configuration.addLoadedResource(resource);
+      // 绑定DAO操作接口和当前配置的关系
       bindMapperForNamespace();
     }
-
+    // 解析未完成处理的ResultMap
     parsePendingResultMaps();
+    // 解析未完成处理的缓存引用
     parsePendingCacheRefs();
+    // 解析未完成处理的语句
     parsePendingStatements();
   }
 
@@ -105,16 +112,24 @@ public class XMLMapperBuilder extends BaseBuilder {
 
   private void configurationElement(XNode context) {
     try {
+      //获取配置文件中配置的名称空间
       String namespace = context.getStringAttribute("namespace");
       if (namespace == null || namespace.equals("")) {
         throw new BuilderException("Mapper's namespace cannot be empty");
       }
+      //设置BuilderAssistant实例当前的命名空间为mapper.xml文件中配置的命名空间
       builderAssistant.setCurrentNamespace(namespace);
+      //解析<cache-ref/>配置
       cacheRefElement(context.evalNode("cache-ref"));
+      //解析<cache/>配置
       cacheElement(context.evalNode("cache"));
+      //解析<parameterMap/>配置
       parameterMapElement(context.evalNodes("/mapper/parameterMap"));
+      //解析<resultMap/>配置
       resultMapElements(context.evalNodes("/mapper/resultMap"));
+      //解析<sql/>配置
       sqlElement(context.evalNodes("/mapper/sql"));
+      //解析<select/>、<insert/>、<update/>和<delete/>配置
       buildStatementFromContext(context.evalNodes("select|insert|update|delete"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing Mapper XML. The XML location is '" + resource + "'. Cause: " + e, e);
@@ -395,11 +410,15 @@ public class XMLMapperBuilder extends BaseBuilder {
     return null;
   }
 
+  /**
+   * 绑定Mapper和命名空间的关系,这里的mapper代指DAO操作接口
+   */
   private void bindMapperForNamespace() {
     String namespace = builderAssistant.getCurrentNamespace();
     if (namespace != null) {
       Class<?> boundType = null;
       try {
+        // 加载Mapper文件对应的Dao操作接口
         boundType = Resources.classForName(namespace);
       } catch (ClassNotFoundException e) {
         //ignore, bound type is not required
@@ -409,7 +428,9 @@ public class XMLMapperBuilder extends BaseBuilder {
           // Spring may not know the real resource name so we set a flag
           // to prevent loading again this resource from the mapper interface
           // look at MapperAnnotationBuilder#loadXmlResource
+          // 注册已加载过的资源集合
           configuration.addLoadedResource("namespace:" + namespace);
+          // 注册DAO操作接口
           configuration.addMapper(boundType);
         }
       }

@@ -34,11 +34,14 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ * 负责 mapper 配置文件中 select|insert|update|delete 节点解析
+ *
  * @author Clinton Begin
  */
 public class XMLStatementBuilder extends BaseBuilder {
 
   private final MapperBuilderAssistant builderAssistant;
+  // select|insert|update|delete 节点
   private final XNode context;
   private final String requiredDatabaseId;
 
@@ -101,6 +104,8 @@ public class XMLStatementBuilder extends BaseBuilder {
     if (configuration.hasKeyGenerator(keyStatementId)) {
       keyGenerator = configuration.getKeyGenerator(keyStatementId);
     } else {
+      // 根据SQL节点的useGeneratedKeys属性值、mybatis-config.xml中的全局useGeneratedKeys配置，
+      // 以及是否是insert语句 觉得使用哪个KeyGenerator接口
       keyGenerator = context.getBooleanAttribute("useGeneratedKeys",
           configuration.isUseGeneratedKeys() && SqlCommandType.INSERT.equals(sqlCommandType))
           ? Jdbc3KeyGenerator.INSTANCE : NoKeyGenerator.INSTANCE;

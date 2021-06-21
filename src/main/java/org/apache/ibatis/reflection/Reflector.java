@@ -45,26 +45,40 @@ import org.apache.ibatis.reflection.property.PropertyNamer;
  * @author Clinton Begin
  */
 public class Reflector {
-
+  // 对应的class类型
   private final Class<?> type;
+  // 可读属性的名称集合，可读属性就是存在相应getter方法的属性
   private final String[] readablePropertyNames;
+  // 可写属性的名称集合，可写属性就是存在相应setter方法的属性
   private final String[] writeablePropertyNames;
+  // 记录了属性相应的setter方法，key是属性名称，value 是Invoker对象，它是对setter方法对应 Method 对象的封装
   private final Map<String, Invoker> setMethods = new HashMap<String, Invoker>();
+  // 属性相应的getter方法集合，key 是属性名称，value 也是Invoker对象
   private final Map<String, Invoker> getMethods = new HashMap<String, Invoker>();
+  // 记录了属性相应的setter方法的参数值类型，key是属性名称，value是setter方法的参数类型
   private final Map<String, Class<?>> setTypes = new HashMap<String, Class<?>>();
+  // 记录了属性相应的getter方法的参数值类型，key是属性名称，value是getter方法的参数类型
   private final Map<String, Class<?>> getTypes = new HashMap<String, Class<?>>();
+  // 记录了默认的构造函数
   private Constructor<?> defaultConstructor;
-
+  // 记录了所有属性名称的集合
   private Map<String, String> caseInsensitivePropertyMap = new HashMap<String, String>();
 
   public Reflector(Class<?> clazz) {
     type = clazz;
+    // 查找默认构造函数（无参构造函数）具体实现是以反射遍历所有构造方法
     addDefaultConstructor(clazz);
+    // 处理class中的getter方法
     addGetMethods(clazz);
+    // 处理class中的setter方法
     addSetMethods(clazz);
+    // 处理没有getter或setter方法的字段
     addFields(clazz);
+    // 初始化为空数组
     readablePropertyNames = getMethods.keySet().toArray(new String[getMethods.keySet().size()]);
+    // 初始化为空数组
     writeablePropertyNames = setMethods.keySet().toArray(new String[setMethods.keySet().size()]);
+    // 初始化caseInsensitivePropertyMap集合 其中记录了所有大写格式的属性名称
     for (String propName : readablePropertyNames) {
       caseInsensitivePropertyMap.put(propName.toUpperCase(Locale.ENGLISH), propName);
     }

@@ -36,6 +36,7 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * 用于处理数据库支持自增主键的情况，如MySQL的auto_increment
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */

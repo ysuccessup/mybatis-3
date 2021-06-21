@@ -21,6 +21,7 @@ import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 
 /**
+ * 空实现，不需要处理主键
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */

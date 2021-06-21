@@ -93,12 +93,16 @@ import org.apache.ibatis.type.UnknownTypeHandler;
  * @author Clinton Begin
  */
 public class MapperAnnotationBuilder {
-
+  // 只有4个元素：@Select、@Insert、@Update、@Delete，sql语句保存在注解中
   private final Set<Class<? extends Annotation>> sqlAnnotationTypes = new HashSet<Class<? extends Annotation>>();
+  // 只有4个元素：@SelectProvider、@InsertProvider、@UpdateProvider、@DeleteProvider
   private final Set<Class<? extends Annotation>> sqlProviderAnnotationTypes = new HashSet<Class<? extends Annotation>>();
 
   private final Configuration configuration;
+  // Mapper构建助手，用于组装解析出来的配置，生成Cache、ResultMap、MappedStatement等对象，
+  // 并添加到Configuration配置对象中
   private final MapperBuilderAssistant assistant;
+  // 要解析的目标mapper接口的Class对象
   private final Class<?> type;
 
   public MapperAnnotationBuilder(Configuration configuration, Class<?> type) {

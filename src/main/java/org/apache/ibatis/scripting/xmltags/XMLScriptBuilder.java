@@ -30,6 +30,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
+ * 负责各 sql 节点解析，主要是动态 sql 解析
  * @author Clinton Begin
  */
 public class XMLScriptBuilder extends BaseBuilder {

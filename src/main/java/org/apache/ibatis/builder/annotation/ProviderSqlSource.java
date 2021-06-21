@@ -29,6 +29,7 @@ import org.apache.ibatis.reflection.ParamNameResolver;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ * 通过注解映射的形式获取的 SQL语句
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */

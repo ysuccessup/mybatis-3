@@ -103,6 +103,7 @@ public class Configuration {
   protected boolean mapUnderscoreToCamelCase;
   protected boolean aggressiveLazyLoading;
   protected boolean multipleResultSetsEnabled = true;
+  // 允许 JDBC 支持自动生成主键，需要驱动兼容。这就是insert时获取mysql自增主键/oracle sequence的开关。注：一般来说,这是希望的结果,应该默认值为true比较合适。
   protected boolean useGeneratedKeys;
   protected boolean useColumnLabel = true;
   protected boolean cacheEnabled = true;
@@ -113,13 +114,17 @@ public class Configuration {
   protected String logPrefix;
   protected Class <? extends Log> logImpl;
   protected Class <? extends VFS> vfsImpl;
+  // 一级缓存范围默认 SESSION
   protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
   protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
   protected Set<String> lazyLoadTriggerMethods = new HashSet<String>(Arrays.asList(new String[] { "equals", "clone", "hashCode", "toString" }));
   protected Integer defaultStatementTimeout;
   protected Integer defaultFetchSize;
+  // 默认执行器类型为 SIMPLE
   protected ExecutorType defaultExecutorType = ExecutorType.SIMPLE;
+  // 自动映射 默认为PARTIAL
   protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
+  // 自动映射未知列 默认NONE
   protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
 
   protected Properties variables = new Properties();
@@ -141,7 +146,9 @@ public class Configuration {
 
   protected final MapperRegistry mapperRegistry = new MapperRegistry(this);
   protected final InterceptorChain interceptorChain = new InterceptorChain();
+  // 类型处理器注册表
   protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
+  // 类型别名注册器
   protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
   protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 
@@ -463,6 +470,8 @@ public class Configuration {
   }
 
   /**
+   * 为Enum设置一个默认的TypeHandler类。
+   * 默认的TypeHandler是org.apache.ibatis.type.EnumTypeHandler
    * Set a default {@link TypeHandler} class for {@link Enum}.
    * A default {@link TypeHandler} is {@link org.apache.ibatis.type.EnumTypeHandler}.
    * @param typeHandler a type handler class for {@link Enum}

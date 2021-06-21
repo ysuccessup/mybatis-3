@@ -33,13 +33,20 @@ import org.apache.ibatis.session.Configuration;
  */
 public final class MappedStatement {
 
+  // mapper配置文件名，如：UserMapper.xml
   private String resource;
+  // 全局配置
   private Configuration configuration;
+  // 节点的id属性加命名空间,如：com.lucky.mybatis.dao.UserMapper.selectByExample
   private String id;
   private Integer fetchSize;
+  // 超时时间
   private Integer timeout;
+  // 操作SQL的对象的类型
   private StatementType statementType;
+  // 结果类型
   private ResultSetType resultSetType;
+  // sql语句
   private SqlSource sqlSource;
   private Cache cache;
   private ParameterMap parameterMap;
@@ -47,6 +54,7 @@ public final class MappedStatement {
   private boolean flushCacheRequired;
   private boolean useCache;
   private boolean resultOrdered;
+  // sql语句类型
   private SqlCommandType sqlCommandType;
   private KeyGenerator keyGenerator;
   private String[] keyProperties;

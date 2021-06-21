@@ -32,6 +32,7 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 /**
+ * 用于执行没有任何参数传入的 SQL
  * @author Clinton Begin
  */
 public class SimpleStatementHandler extends BaseStatementHandler {

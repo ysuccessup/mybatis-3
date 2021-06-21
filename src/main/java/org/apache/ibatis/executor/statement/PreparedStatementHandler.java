@@ -32,6 +32,7 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 /**
+ * 需要对外部传入的变量和参数进行提前参数绑定和赋值
  * @author Clinton Begin
  */
 public class PreparedStatementHandler extends BaseStatementHandler {

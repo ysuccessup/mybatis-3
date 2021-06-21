@@ -39,15 +39,21 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 public abstract class BaseStatementHandler implements StatementHandler {
 
   protected final Configuration configuration;
+  // 对象工厂，创建对象来使用
   protected final ObjectFactory objectFactory;
+  // 类型转换注册器
   protected final TypeHandlerRegistry typeHandlerRegistry;
+  // SQL 查询结果，封装成 ResultMap 对象 处理器
   protected final ResultSetHandler resultSetHandler;
+  // 记录使用的 ParameterHandler 对象， ParameterHandler 的主要功能是为 SQL 句绑定实参 ，使用实参替换 SQL 吾句的中 ? 占位符。
   protected final ParameterHandler parameterHandler;
 
   protected final Executor executor;
+  // 封装 mapper.xml <SQL> 节点 成 MappedStatement 对象
   protected final MappedStatement mappedStatement;
+  //  RowBounds 记录了用户设置的 offset limit ，用于在结采集中定位映射的起始位置和结束位置
   protected final RowBounds rowBounds;
-
+  // 数据库可以执行的 SQL 语句
   protected BoundSql boundSql;
 
   protected BaseStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {

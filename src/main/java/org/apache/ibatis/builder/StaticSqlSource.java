@@ -23,6 +23,7 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ * 静态语句。语句中可能含有“？”，可以直接提交给数据库执行
  * @author Clinton Begin
  */
 public class StaticSqlSource implements SqlSource {

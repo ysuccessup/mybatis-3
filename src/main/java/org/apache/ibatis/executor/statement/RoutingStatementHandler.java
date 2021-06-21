@@ -30,6 +30,9 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 /**
+ * RoutingStatementHandler 并没有对 Statement 对象进行使用，只是根据StatementType 来创建一个代理，
+ * 代理的就是BaseStatementHandler的三种实现类
+ *
  * @author Clinton Begin
  */
 public class RoutingStatementHandler implements StatementHandler {
